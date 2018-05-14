@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="./js/extjs/css/ext-all.css"></link>
+    <link rel="stylesheet" type="text/css" href="./js/extjs/ux/css/fileuploadfield.css"></link>
+    <script type="text/javascript" src="./js/extjs/js/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="./js/extjs/js/ext-all.js"></script>
+    <script type="text/javascript" src="./js/extjs/ux/ux-all.js"></script>
+    <script type="text/javascript" src="./js/extjs/ux/FileUploadField.js"></script>
+    <script type="text/javascript" src="./js/extjs/js/ext-lang-zh_CN.js"></script>
+</head>
+
+<body>
+    <div id="hello"></div>
+    <script>
+        Ext.onReady(function () {
+            var msg = function (title, msg) {
+                Ext.Msg.show({
+                    title: title,
+                    msg: msg,
+                    minWidth: 200,
+                    modal: true,
+                    icon: Ext.Msg.INFO,
+                    buttons: Ext.Msg.OK
+                });
+
+            };
+
+            var fp = new Ext.FormPanel({
+                renderTo: 'hello',
+                fileUpload: true,
+                width: 500,
+                frame: true,
+                title: '图片上传操作',
+                autoHeight: true,
+                bodyStyle: 'padding: 10px 10px 0 10px;',
+                labelWidth: 50,
+                defaults: {
+                    anchor: '95%',
+                    allowBlank: false,
+                    msgTarget: 'side'
+                },
+                items: [{
+                    xtype: 'textfield',
+                    fieldLabel: '姓名',
+                    name: "txtname"
+                }, {
+                    xtype: 'fileuploadfield',
+                    id: 'form-file',
+                    emptyText: '点击右侧按钮选择图片',
+                    fieldLabel: '图片',
+                    name: 'photo-path',
+                    multiple: 'multiple',
+                    accept: 'image/png,image/jpeg',
+                    buttonText: '',
+                    buttonCfg: {
+                        iconCls: 'upload-icon'
+                    },
+                    listeners: {
+                        'fileselected': function(fb, v){
+                            var url = "";
+                            if (Ext.isIE) {
+                                url = fb.fileInput.dom.value;
+                                var image = Ext.get('imageBrowse').dom;
+                                image.src = Ext.BLANK_IMAGE_URL;
+                                image.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = url;
+                            } else {
+                                url = fb.fileInput.dom;
+                                Ext.get('imageBrowse').dom.src = window.URL.createObjectURL(url.files[0]);
+                            }
+                        }
+                    }
+                }, {
+                    id: 'selectfile',
+                    xtype: 'textfield',
+                    fieldLabel: '图片',
+                    name: 'media',
+                    inputType: 'file'
+                }, {
+                    xtype: 'box',
+                    style: 'border: 1px solid #aaa; margin-top:25px;',
+                    id: 'browseImage',
+                    fieldLabel: "预览图片",
+                    hideLabel: true,
+                    autoEl: {
+                        height: 400,
+                        tag: 'img',
+                        src: Ext.BLANK_IMAGE_URL,
+                        style: 'filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale);',
+                        complete: 'off',
+                        id: 'imageBrowse'
+                    }
+                }],
+                buttons: [{
+                    text: '保存',
+                    handler: function () {
+                        // if (fp.getForm().isValid()) {
+                        //     fp.getForm().submit({
+                        //         url: 'Default.aspx', //后台处理的页面  
+                        //         waitMsg: 'Uploading your photo...',
+                        //         success: function (fp, o) {
+                        //             msg('Success', 'Processed file "' + o.result
+                        //                 .files + '" on the server');
+                        //         }
+                        //     });
+                        // }
+                    }
+                }, {
+                    text: '重置',
+                    handler: function () {
+                        fp.getForm().reset();
+                    }
+                }]
+            });
+            Ext.get('selectfile').on('change', function (field, newValue, oldValue) {
+                var url = 'file://' + Ext.get('selectfile').dom.value;
+                if (Ext.isIE) {
+                    var image = Ext.get('imageBrowse').dom;
+                    image.src = Ext.BLANK_IMAGE_URL; // 覆盖原来的图片
+                    image.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src =
+                        url;
+                } // 支持FF
+                else {
+                    var url = Ext.get('selectfile').dom;
+                    Ext.get('imageBrowse').dom.src = window.URL.createObjectURL(url.files[0]); //url.files.item(0).getAsDataURL();
+                }
+            }, this);
+        });
+    </script>
+</body>
+
+</html>

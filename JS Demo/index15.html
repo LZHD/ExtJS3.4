@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://oss.sheetjs.com/js-xlsx/xlsx.full.min.js"></script>
+    <script src="index15.js"></script>
+</head>
+
+<body>
+    <input type="file" id="demo" />
+    <div id="loadInfo"></div>
+    <div>
+        <div>
+            <label>SheetNames</label>:
+            <span id="SheetNames"></span>
+        </div>
+        <div>
+            <label id="demoName"></label>(示例):
+            <span id="demoData"></span>
+        </div>
+    </div>
+    <button id="down">导出</button>
+    <script>
+        var demo = document.getElementById("demo");
+        demo.onchange = function () {
+            let f = this.files[0];
+            let loadInfo = document.getElementById("loadInfo");
+            let demoName = document.getElementById("demoName");
+            let demoData = document.getElementById("demoData");
+            loadInfo.innerHTML = "正在读取请骚等";
+            demoName.innerHTML = "";
+            demoData.innerHTML = "";
+            xlsxUtils.import(f, (w) => {
+                document.getElementById("SheetNames").innerHTML = JSON.stringify(w.SheetNames);
+                demoName.innerHTML = w.SheetNames[0];
+                demoData.innerHTML = JSON.stringify(xlsxUtils.getSheetByIndex(0));
+                loadInfo.innerHTML = "读取完成";
+            });
+        };
+        var data = [{
+            主页: "111",
+            名称: "6800",
+            数量: "6800",
+            昵称: "广告主网"
+        }, {
+            主页: "433",
+            名称: "6800",
+            数量: "6800",
+            昵称: "广告主网"
+        }, {
+            名称: "22",
+            商家: "6800",
+            数量: "6800",
+            昵称: "广告主网",
+        }, {
+            名称: "43",
+            商家: "6800",
+            数量: "6800",
+            昵称: "广告主网",
+        }, {
+            店家: "43",
+            价格: "6800",
+            数量: "6800",
+            昵称: "广告主网",
+        }];
+        var down = document.getElementById("down");
+
+        function saveAs(e, t) {
+            if (!("string" != typeof e || e.length <= 0)) {
+                var n = document.createElement("a");
+                n.id = "download-" + Date.parse(new Date), n.href = e, n.download = t || "", n.style =
+                    "opacity: 0;height: 1px;width: 1px;overflow: hidden;position:fixed;top: -1;left: -1;z-index: -1;",
+                    document.body.appendChild(n), document.getElementById(n.id).click(), document.body.removeChild(
+                        document.getElementById(n.id))
+            }
+        }
+        down.onclick = function () {
+            // data.unshift(xlsxUtils.readDataHead(data));
+            var blob = xlsxUtils.export({
+                "Sheet1": data
+            });
+            saveAs(URL.createObjectURL(blob), "aa.xlsx");
+        };
+    </script>
+</body>
+
+</html>

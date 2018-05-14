@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="./js/extjs/css/ext-all.css"></link>
+    <script type="text/javascript" src="./js/extjs/js/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="./js/extjs/js/ext-all.js"></script>
+    <script type="text/javascript" src="./js/extjs/js/ext-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="./js/string-math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.2.2/math.js"></script>
+</head>
+
+<body>
+    <div id="hello"></div>
+    <script>
+        Ext.onReady(function () {
+            //array with data - dummy data
+            var myData = [
+                ['Meyers, Quyn R.', '(943) 570-5141', 'Proin@nullamagna.ca', '05/13/1990'],
+                ['Whitney, Tad T.', '(547) 743-0343', 'vulputate@acurnaUt.org', '05/10/1987'],
+                ['Lawrence, Flavia J.', '(404) 826-4553', 'dapibus.id@accumsan.ca', '01/05/1988'],
+                ['Morales, Susan I.', '(276) 707-8084', 'tristique@seacmetus.com', '03/09/1992'],
+                ['Merrill, Desiree Q.', '(911) 546-0559', 'dictum.cursus@vel.ca', '01/07/1981'],
+                ['Hampton, Willa Y.', '(729) 562-8303', 'nascetur@stellus.ca', '06/17/1991'],
+                ['Brewer, Brynne F.', '(818) 302-4393', 'ligula@ullamcorper.org', '04/20/1989'],
+                ['Marsh, Drew D.', '(645) 671-2779', 'et.euismod.et@eget.ca', '02/13/1990']
+            ];
+            //data store - description of fields
+            var store = new Ext.data.SimpleStore({
+                fields: [
+                    'name',
+                    'phone',
+                    'email',
+                    'birthday'
+                ]
+            });
+
+            store.loadData(myData);
+
+            // create the Grid
+            var grid = new Ext.grid.GridPanel({
+                id: 'static-grid',
+                store: store,
+                columns: [{
+                        header: 'NAME',
+                        width: 170,
+                        sortable: true,
+                        dataIndex: 'name'
+                    },
+                    {
+                        header: 'PHONE',
+                        width: 150,
+                        sortable: true,
+                        dataIndex: 'phone'
+                    },
+                    {
+                        header: 'BIRTHDAY',
+                        width: 100,
+                        sortable: true,
+                        dataIndex: 'birthday'
+                    },
+                    {
+                        header: 'EMAIL',
+                        width: 160,
+                        sortable: true,
+                        dataIndex: 'email'
+                    }
+                ],
+                stripeRows: true,
+                autoHeight: true,
+                width: 580,
+                title: '联系资料'
+            });
+
+            var fp = new Ext.FormPanel({
+                renderTo: 'hello',
+                width: 800,
+                frame: true,
+                title: '计算器',
+                autoHeight: true,
+                bodyStyle: 'padding: 10px 10px 0 10px;',
+                labelWidth: 50,
+                defaults: {
+                    anchor: '95%',
+                    allowBlank: false,
+                    msgTarget: 'side'
+                },
+                items: [{
+                        layout: 'column',
+                        xtype: 'panel',
+                        bodyStyle: 'margin-bottom: 5px;',
+                        items: [{
+                            columnWidth: .16,
+                            layout: 'fit',
+
+                            items: [{
+                                xtype: "button",
+                                text: '+',
+                                handler: function () {
+                                    var text = Ext.getCmp("gs").getValue();
+                                    Ext.getCmp("gs").setValue(text + this.getText());
+                                }
+                            }]
+                        }, {
+                            columnWidth: .16,
+                            layout: 'fit',
+
+                            items: [{
+                                xtype: "button",
+                                text: '-',
+                                handler: function () {
+                                    var text = Ext.getCmp("gs").getValue();
+                                    Ext.getCmp("gs").setValue(text + this.getText());
+                                }
+                            }]
+                        }, {
+                            columnWidth: .16,
+                            layout: 'fit',
+
+                            items: [{
+                                xtype: "button",
+                                text: '*',
+                                handler: function () {
+                                    var text = Ext.getCmp("gs").getValue();
+                                    Ext.getCmp("gs").setValue(text + this.getText());
+                                }
+                            }]
+                        }, {
+                            columnWidth: .16,
+                            layout: 'fit',
+
+                            items: [{
+                                xtype: "button",
+                                text: '/',
+                                handler: function () {
+                                    var text = Ext.getCmp("gs").getValue();
+                                    Ext.getCmp("gs").setValue(text + this.getText());
+                                }
+                            }]
+                        }, {
+                            columnWidth: .16,
+                            layout: 'fit',
+
+                            items: [{
+                                xtype: "button",
+                                text: '(',
+                                handler: function () {
+                                    var text = Ext.getCmp("gs").getValue();
+                                    Ext.getCmp("gs").setValue(text + this.getText());
+                                }
+                            }]
+                        }, {
+                            columnWidth: .16,
+                            layout: 'fit',
+
+                            items: [{
+                                xtype: "button",
+                                text: ')',
+                                handler: function () {
+                                    var text = Ext.getCmp("gs").getValue();
+                                    Ext.getCmp("gs").setValue(text + this.getText());
+                                }
+                            }]
+                        }]
+                    },
+                    {
+                        id: 'gs',
+                        xtype: 'textarea',
+                        fieldLabel: '备注'
+                    },
+                    grid
+                ],
+                buttons: [{
+                    text: '保存',
+                    handler: function () {
+                        // if (fp.getForm().isValid()) {
+                        //     fp.getForm().submit({
+                        //         url: 'Default.aspx', //后台处理的页面  
+                        //         waitMsg: 'Uploading your photo...',
+                        //         success: function (fp, o) {
+                        //             msg('Success', 'Processed file "' + o.result
+                        //                 .files + '" on the server');
+                        //         }
+                        //     });
+                        // }
+                        var text = Ext.getCmp("gs").getValue();
+                        var strArr = text.split(/\(|\)|\+|\-|\*|\//g);
+                        strArr.forEach(function (item) {
+                            console.log(grid.getSelections.get)
+                            if (!!item) {
+                                text = text.replace(item, function (i) {
+                                    return 1;
+                                });
+                            }
+                        });
+                        var text1 = stringMath(text, function (data) {});
+                        console.log(text1);
+                        // var parsed = null;
+                        // try {
+                        //     parsed = math.parse(text);
+                        //     console.log(parsed);
+                        //     console.log(math.format(parsed.compile().eval()));
+                        // }
+                        // catch (err) {
+                        //     console.log(err.toString());
+                        // }
+                    }
+                }, {
+                    text: '重置',
+                    handler: function () {
+                        fp.getForm().reset();
+                    }
+                }]
+            });
+        });
+    </script>
+</body>
+
+</html>
