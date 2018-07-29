@@ -9,6 +9,32 @@
     <script type="text/javascript" src="../ext-3.4.1/src/locale/ext-lang-zh_CN.js"></script>
 </head>
 <body>
-
+    <script>
+        //重写TreeLoader的requestData方法
+        Ext.override(Ext.tree.TreeLoader, {
+            requestData : function(node, callback, scope){
+                if(this.fireEvent("beforeload", this, node, callback) !== false){
+                    if(this.directFn){
+                        var args = this.getParams(node);
+                        args.push(this.processDirectResponse.createDelegate(this, [{callback: callback, node: node, scope: scope}], true));
+                        this.directFn.apply(window, args);
+                    }else{
+                        this.transId = Ext.Ajax.request({
+                            method:this.requestMethod,
+                            url: this.dataUrl||this.url,
+                            success: this.handleResponse,
+                            failure: this.handleFailure,
+                            timeout: this.timeout || 30000,
+                            scope: this,
+                            argument: {callback: callback, node: node, scope: scope},
+                            params: this.getParams(node)
+                        });
+                    }
+                }else{
+                    this.runCallback(callback, scope || node, []);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
