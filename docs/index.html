@@ -3,11 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
-    <button id="connectButton">Connect</button>
+    <button id="connectButton" style="width: 100%;">连接</button>
+    <input type="text" id="nameInput" style="width: 100%;">
+    <button id="writeNameButton" style="width: 100%;">修改</button>
     <script>
         const connectButton = document.querySelector('#connectButton');
+        const writeNameButton = document.querySelector('#writeNameButton');
+        const nameInput = document.querySelector('#nameInput');
         function logProgress(x) {
             console.log("Progress:", x);
             return x;
@@ -45,6 +60,15 @@
                 .then(characteristic => {
                     window.deviceName = characteristic;
                     return characteristic.readValue();
+                })
+        });
+
+        writeNameButton.addEventListener('click', function () {
+            Promise.resolve()
+                .then(_ => {
+                    let uint8arrayName = new TextEncoder("utf-8").encode(nameInput.value);
+                    console.log("Writing: ", uint8arrayName);
+                    return deviceName.writeValue(uint8arrayName)
                 })
         });
     </script>
