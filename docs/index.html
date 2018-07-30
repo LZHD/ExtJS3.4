@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button id="connectButton">Connect</button>
+    <script>
+        const connectButton = document.querySelector('#connectButton');
+        function logProgress(x) {
+            console.log("Progress:", x);
+            return x;
+        }
+        function anyDeviceFilter() {
+            // This is the closest we can get for now to get all devices.
+            // https://github.com/WebBluetoothCG/web-bluetooth/issues/234
+            return Array.from('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+                .map(c => ({namePrefix: c}))
+                .concat({name: ''});
+        }
+        connectButton.addEventListener('click', function () {
+            Promise.resolve()
+                .then(_ => {
+                    if (!navigator.bluetooth)
+                        throw "No Web Bluetooth support.";
+
+                    return navigator.bluetooth.requestDevice({
+                        filters: anyDeviceFilter(),
+                        optionalServices: ['generic_access']
+                    })
+                })
+                .then(logProgress)
+                .then(device => {
+                    return device.gatt.connect().catch(error => {
+                        console.log(error);
+                        throw "Unable to connect. Some devices refuse connections.";
+                    });
+                })
+                .then(logProgress)
+                .then(server => server.getPrimaryService("generic_access"))
+                .then(logProgress)
+                .then(service => service.getCharacteristic("gap.device_name"))
+                .then(logProgress)
+                .then(characteristic => {
+                    window.deviceName = characteristic;
+                    return characteristic.readValue();
+                })
+        });
+    </script>
+</body>
+</html>
