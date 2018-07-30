@@ -3,38 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>树加载超时处理</title>
-    <link rel="stylesheet" type="text/css" href="../ext-3.4.1/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="../ext-3.4.1/resources/css/ext-all.css"/>
     <script type="text/javascript" src="../ext-3.4.1/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="../ext-3.4.1/ext-all.js"></script>
     <script type="text/javascript" src="../ext-3.4.1/src/locale/ext-lang-zh_CN.js"></script>
 </head>
 <body>
-    <script>
+<div id="tree-div"></div>
+<script>
+    Ext.onReady(function () {
+        //方法一
         //重写TreeLoader的requestData方法
         Ext.override(Ext.tree.TreeLoader, {
-            requestData : function(node, callback, scope){
-                if(this.fireEvent("beforeload", this, node, callback) !== false){
-                    if(this.directFn){
+            requestData: function (node, callback, scope) {
+                if (this.fireEvent("beforeload", this, node, callback) !== false) {
+                    if (this.directFn) {
                         var args = this.getParams(node);
-                        args.push(this.processDirectResponse.createDelegate(this, [{callback: callback, node: node, scope: scope}], true));
+                        args.push(this.processDirectResponse.createDelegate(this, [{
+                            callback: callback,
+                            node: node,
+                            scope: scope
+                        }], true));
                         this.directFn.apply(window, args);
-                    }else{
+                    } else {
                         this.transId = Ext.Ajax.request({
-                            method:this.requestMethod,
-                            url: this.dataUrl||this.url,
+                            method: this.requestMethod,
+                            url: this.dataUrl || this.url,
                             success: this.handleResponse,
                             failure: this.handleFailure,
-                            timeout: this.timeout || 30000,
+                            timeout: this.timeout || 30000,// 超时处理
                             scope: this,
                             argument: {callback: callback, node: node, scope: scope},
                             params: this.getParams(node)
                         });
                     }
-                }else{
+                } else {
                     this.runCallback(callback, scope || node, []);
                 }
             }
         });
-    </script>
+
+        //方法二
+        function directFn(nodeId, callback) {
+            Ext.Ajax.request({
+                url: './data/tree.json',
+                method: 'POST',
+                timeout: 30000,// 超时处理
+                success: function (response, opts) {
+                    var treeData = Ext.decode(response.responseText);
+                    callback(treeData, {
+                        status: true
+                    })
+                },
+                failure: function (form, action) {
+                    parent.Ext.ux.Toast.msg('操作提示：', '操作失败');
+                }
+            });
+        }
+        this.tree.getLoader().timeout = 1800000;
+        var tree = new Ext.tree.TreePanel({
+            renderTo: 'tree-div',
+            title: '树加载超时处理',
+            height: 300,
+            width: 400,
+            animate: true,
+            frame: true,
+            root: new Ext.tree.AsyncTreeNode({
+                id: 'root',
+                text: '订单状态'
+            }),
+            // loader: new Ext.tree.TreeLoader({
+            //     dataUrl: './data/tree.json'
+            // })
+            loader: new Ext.tree.TreeLoader({
+                // 执行请求时调用的函数
+                directFn: function (nodeId, callback) {
+                    directFn(nodeId, callback);
+                }
+            })
+        });
+
+        tree.getRootNode().expand(true);
+    });
+</script>
 </body>
 </html>

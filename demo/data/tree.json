@@ -1,0 +1,17 @@
+[
+  {
+    id: 1,
+    text: '选项一',
+    leaf: true
+  },
+  {
+    id: 2,
+    text: '选项二',
+    leaf: true
+  },
+  {
+    id: 3,
+    text: '选项三',
+    leaf: true
+  }
+]
