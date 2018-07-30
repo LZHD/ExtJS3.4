@@ -59,6 +59,7 @@
                 .then(logProgress)
                 .then(characteristic => {
                     window.deviceName = characteristic;
+                    alert(characteristic);
                     return characteristic.readValue();
                 })
         });
@@ -68,6 +69,7 @@
                 .then(_ => {
                     let uint8arrayName = new TextEncoder("utf-8").encode(nameInput.value);
                     console.log("Writing: ", uint8arrayName);
+                    alert(uint8arrayName);
                     return deviceName.writeValue(uint8arrayName)
                 })
         });
