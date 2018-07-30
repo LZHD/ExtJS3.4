@@ -48,7 +48,7 @@
             Ext.Ajax.request({
                 url: './data/tree.json',
                 method: 'POST',
-                timeout: 30000,// 超时处理
+                timeout: 1800000,// 超时处理
                 success: function (response, opts) {
                     var treeData = Ext.decode(response.responseText);
                     callback(treeData, {
@@ -60,7 +60,7 @@
                 }
             });
         }
-        this.tree.getLoader().timeout = 1800000;
+
         var tree = new Ext.tree.TreePanel({
             renderTo: 'tree-div',
             title: '树加载超时处理',
@@ -72,9 +72,12 @@
                 id: 'root',
                 text: '订单状态'
             }),
+            // 方法一
             // loader: new Ext.tree.TreeLoader({
-            //     dataUrl: './data/tree.json'
-            // })
+            //     dataUrl: './data/tree.json',
+            //     timeout: 1800000
+            // }),
+            // 方法二
             loader: new Ext.tree.TreeLoader({
                 // 执行请求时调用的函数
                 directFn: function (nodeId, callback) {
