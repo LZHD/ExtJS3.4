@@ -225,7 +225,7 @@ limitations under the License.
 
         function sendTextData() {
           // Get the bytes for the text
-          let encoder = new TextEncoder("utf-8");
+          let encoder = new TextEncoder("gb2312");
           // Add line feed + carriage return chars to text
           let text = encoder.encode(message.value + '\u000A\u000D');
           return printCharacteristic.writeValue(text).then(() => {
