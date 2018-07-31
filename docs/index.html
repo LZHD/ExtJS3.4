@@ -227,7 +227,7 @@ limitations under the License.
           // Get the bytes for the text
           let encoder = new TextEncoder("gbk");
           // Add line feed + carriage return chars to text
-          let text = encoder.encode(message.value + '\u000A\u000D');
+          let text = encoder.encode('\u8fd9\u662f\u4e00\u4e2a\u4f8b\u5b50,this is a example' + '\u000A\u000D');
           return printCharacteristic.writeValue(text).then(() => {
             console.log('Write done.');
           });
