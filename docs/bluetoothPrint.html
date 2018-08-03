@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>蓝牙打印</title>
+</head>
+<body>
+<input type="text" id="printText" title="">
+<button id="printBtn">打印</button>
+<script>
+    let printText = document.querySelector('#printText');
+    let printBtn = document.querySelector('#printBtn');
+    let printCharacteristic;
+
+    function printData() {
+        let sendData = printText.value;
+        printCharacteristic.writeValue(sendData).then(() => {
+            console.log('Write done.');
+        });
+    }
+
+    printBtn.addEventListener('click', function () {
+        if (!!printCharacteristic) {
+            printData();
+        } else {
+            navigator.bluetooth.requestDevice({
+                filters: [{
+                    services: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
+                }]
+            }).then(device => {
+                return device.gatt.connect();
+            }).then(
+                server => server.getPrimaryService("49535343-fe7d-4ae5-8fa9-9fafd205e455")
+            ).then(
+                service => service.getCharacteristic("49535343-8841-43f4-a8d4-ecbe34729bb3")
+            ).then(characteristic => {
+                printCharacteristic = characteristic;
+                printData();
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
+    })
+</script>
+</body>
+</html>
