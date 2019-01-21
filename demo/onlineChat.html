@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../ext-3.4.1/resources/css/ext-all.css"/>
+    <script type="text/javascript" src="../ext-3.4.1/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="../ext-3.4.1/ext-all.js"></script>
+    <script type="text/javascript" src="../ext-3.4.1/src/locale/ext-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="./js/onlineChat.js"></script>
+</head>
+<body>
+<div id="hello"></div>
+<script>
+    Ext.onReady(function () {
+        Ext.QuickTips.init();
+        var win = new OnlineChatWindow();
+        win.show();
+    });
+</script>
+</body>
+</html>
